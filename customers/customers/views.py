@@ -35,7 +35,7 @@ def customer(request, id):
         return Response({'customer': serializer.data})
     elif request.method == 'DELETE':
         data.delete()
-        return Response(status=status.HTTP_410_GONE)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     elif request.method == 'POST':  # Modificar elemento existente (update)
         serializer = CustomerSerializer(data, data=request.data)
         if serializer.is_valid():
