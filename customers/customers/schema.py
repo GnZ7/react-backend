@@ -1,12 +1,18 @@
 import graphene
 from graphene_django import DjangoObjectType
 from customers.models import Customer
+from customers.models import Order
 
 class CustomerType(DjangoObjectType):
     class Meta:
         model = Customer
         fields = '__all__'
 
+class OrderType(DjangoObjectType):
+    class Meta:
+        model = Order
+        fields = '__all__'
+         
 class CreateCustomer(graphene.Mutation):
     class Arguments:
         name=graphene.String()
@@ -20,10 +26,14 @@ class CreateCustomer(graphene.Mutation):
     
 class Query(graphene.ObjectType):
     customers = graphene.List(CustomerType) #Trae todos los clientes
+    orders = graphene.List(OrderType)
     customer_by_name = graphene.List(CustomerType, name=graphene.String(required=True)) #Trae al cliente con el name del argumento.
 
     def resolve_customers(root,info):
         return Customer.objects.all()
+    
+    def resolve_orders(root,info):
+        return Order.objects.select_related('customer').all()
     
     def resolve_customer_by_name(root, info, name):
         try:
